@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la .claude/)",
+      "Bash(cat package.json)",
+      "Bash(npx create-next-app@latest woodbridge-cg-site --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(node -e \"const pkg = require\\('./node_modules/next/package.json'\\); console.log\\('Next.js:', pkg.version\\)\")",
+      "Bash(node -e \"const pkg = require\\('./node_modules/tailwindcss/package.json'\\); console.log\\('Tailwind:', pkg.version\\)\")",
+      "Bash(npx shadcn@latest init --defaults)",
+      "Bash(npx shadcn@latest add sheet --yes)",
+      "Bash(node -e \"const pkg = require\\('./node_modules/lucide-react/package.json'\\); console.log\\('lucide-react:', pkg.version\\)\")",
+      "Bash(node -e \"const pkg = require\\('./node_modules/framer-motion/package.json'\\); console.log\\('framer-motion:', pkg.version\\)\")",
+      "Bash(node -e \"try { const t = require\\('./node_modules/lucide-react/dist/lucide-react'\\); console.log\\('LucideIcon exported:', !!t.LucideIcon\\) } catch\\(e\\) { console.log\\(e.message\\) }\")"
+    ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
+  }
+}
