@@ -1,259 +1,163 @@
-# Woodbridge CG — Implementation Plan
+# Woodbridge CG — Build State
 
-> Single-page marketing site. Next.js App Router · TypeScript (strict) · Tailwind · shadcn/ui · Framer Motion · Lucide.
-> This plan reflects the locked decisions below. No code is written until Phase 1.
+> Single-page marketing site. All 5 phases complete. Tagged `v1-foundation`.
+> Next.js 16.2.6 · TypeScript strict · Tailwind v4 · shadcn/ui (base-nova) · Framer Motion 12 · Lucide React
+
+---
 
 ## Locked decisions (source of truth)
 
-1. **Single page** with anchor-scroll navigation (no multi-route IA).
-2. **Calendly** powers the consultation CTA.
+1. **Single page** with anchor-scroll navigation — no multi-route IA.
+2. **Calendly** powers all consultation CTAs.
 3. CTA labels are fixed: primary **"Book a Free Consultation"**, secondary **"See AI Demos"**.
 4. Animations are **subtle and minimal** everywhere.
-5. Hero is a **clean split-layout** with one primary visual area — no layered dashboards.
-6. Treat as a **single regional consultancy** — no per-location SEO/page architecture.
-7. **No site i18n.** "Multilingual" describes the AI phone-agent product only.
-8. Testimonials and results metrics are **clearly-labeled placeholders** for now.
+5. Hero is a **clean split-layout** — no layered dashboards, one primary visual.
+6. **Single regional consultancy** — no per-location pages or SEO splitting.
+7. **No site i18n.** Multilingual = AI phone agent product capability only.
+8. Testimonials and results metrics are **clearly-labeled placeholders**.
 9. AI demo is a **lightweight placeholder section** — no real interactivity, audio, or backend.
 10. Testimonials render as a **responsive grid**, not a carousel.
 11. **Stay pragmatic** — avoid overengineering.
 
 ---
 
-## 1. Brand + UX strategy
+## Narrative arc
 
-**Positioning.** Woodbridge CG is the trusted local technology partner that modernizes small businesses *without enterprise complexity*. The site must feel local, trustworthy, operationally practical, and premium-but-approachable — never crypto/AI-hype, never generic agency, never enterprise-cold.
-
-**Voice.** Conversational, reassuring, outcome-focused. Talk about saving time, fewer missed calls, and helping overwhelmed owners — not "revolutionary AI." Speak like a consultant who'll show up in person, not a SaaS landing page.
-
-**UX principles.**
-- **One conversion path.** Every CTA leads to the same place: book a free consultation via Calendly. Primary CTA repeats at hero, mid-page, and final CTA.
-- **Scannable narrative.** Each section answers one question and earns the scroll to the next. Owners are busy; reward skimming.
-- **Show, don't hype.** Concrete capabilities and real-world scenarios (lunch-rush calls, after-hours voicemail) over buzzwords.
-- **Honest by construction.** Placeholder testimonials/metrics are visibly labeled as samples so nothing reads as a fabricated claim.
-- **Calm motion.** Motion guides attention (fade-up on scroll), never decorates. Respects reduced-motion.
-
-**Narrative arc (top → bottom).**
-Hook (Hero) → Reassurance (Trust strip) → What we do (Services) → Who it's for (Industries) → How it works (Process) → Proof (Results + Testimonials) → Who we are (About) → See it (AI Demo) → Convert (Final CTA) → Footer.
+Hook (Hero) → Reassurance (Trust strip) → What we do (Services) → Who it's for (Industries) → How it works (Process) → What changes (Results) → Who we are (About) → See it (AI Demo) → What clients say (Testimonials) → Convert (Final CTA) → Footer
 
 ---
 
-## 2. Information architecture
+## Information architecture
 
-**Single page, anchor navigation.** Nav stays lean — 5 anchors max plus the primary CTA. Trust, Results, and Testimonials are scroll-through (not nav items) to avoid clutter.
-
-**Navbar:** `Logo` · Services · Industries · Process · About · AI Demos · **[Book a Free Consultation]**
-**Mobile:** hamburger → drawer with the same anchors + full-width primary CTA.
-
-**Section order & anchors:**
-
-| # | Section | Anchor | In nav | Notes |
-|---|---------|--------|--------|-------|
-| 1 | Hero | `#top` | — | Split layout, both CTAs |
-| 2 | Trust strip | `#trust` | no | Lightweight value-prop row |
-| 3 | Services | `#services` | yes | 3 services, capabilities |
-| 4 | Industries | `#industries` | yes | Restaurants, Corner Stores + pain points |
-| 5 | Process | `#process` | yes | 4-step timeline, "we handle everything" |
-| 6 | Results | `#results` | no | Placeholder metric cards (labeled) |
-| 7 | About / Team | `#about` | yes | Founders prominent |
-| 8 | AI Demo | `#ai-demos` | yes | Placeholder; secondary CTA target |
-| 9 | Testimonials | `#testimonials` | no | Responsive grid (labeled samples) |
-| 10 | Final CTA | `#contact` | — | Calendly CTA |
-| 11 | Footer | — | — | Services, Industries, Locations, Contact, LinkedIn |
-
-Secondary CTA "See AI Demos" scrolls to `#ai-demos`.
+| # | Section | Anchor | In nav | Background |
+|---|---------|--------|--------|------------|
+| 1 | Hero | `#top` / `#hero` | — | bg (warm white) |
+| 2 | Trust strip | `#trust` | no | muted/30 |
+| 3 | Services | `#services` | yes | bg |
+| 4 | Industries | `#industries` | yes | muted/40 |
+| 5 | Process | `#process` | yes | bg |
+| 6 | Results | `#results` | no | muted/40 |
+| 7 | About / Team | `#about` | yes | bg |
+| 8 | AI Demo | `#ai-demos` | yes | muted/40 |
+| 9 | Testimonials | `#testimonials` | no | bg |
+| 10 | Final CTA | `#contact` | — | muted/40 |
+| 11 | Footer | — | — | primary (navy) |
 
 ---
 
-## 3. Component architecture
+## Rendering model
 
-**Rendering model.** Sections are **server components** by default. Only interactive/animated leaves are client components. Reveal animation is achieved by wrapping server-rendered children in a client `MotionWrapper` (children pass through as an RSC payload), so content stays on the server.
+All sections are **server components**. Framer Motion animations use `MotionWrapper` (client) wrapping RSC children, keeping content on the server.
 
-**Client components (the only `"use client"` files):** `navbar`, `mobile-nav`, `motion-wrapper`, `calendly-button`.
+**Client components (exactly 4):** `navbar`, `mobile-nav`, `motion-wrapper`, `sheet`
 
-### Layout (`/components/layout`)
-- `navbar.tsx` — sticky; scroll-state styling; anchor links; primary CTA; hamburger trigger.
-- `mobile-nav.tsx` — shadcn `Sheet` drawer; anchors + full-width CTA.
-- `footer.tsx` — column grid (Services / Industries / Locations / Contact), LinkedIn, copyright.
-
-### UI primitives (`/components/ui`)
-- `button.tsx` (shadcn variants) · `container.tsx` · `section-header.tsx` (eyebrow + title + optional description) · `card.tsx` · `badge.tsx` · `sheet.tsx`
-- `motion-wrapper.tsx` — `FadeUp` + staggered-children variants; reduced-motion aware.
-- `calendly-button.tsx` — Calendly-aware CTA (popup or link), reused everywhere.
-
-### Reusable cards (`/components/ui`, data-driven via props)
-`service-card` · `industry-card` · `process-step` · `stat-card` · `team-member-card` · `testimonial-card` · `trust-pill` · `demo-card`
-
-### Sections (`/components/sections`)
-`hero-section` · `trust-section` · `services-section` · `industries-section` · `process-section` · `results-section` · `about-section` · `ai-demo-section` · `testimonials-section` · `final-cta-section`
-Each maps over typed content and composes primitives — no inline JSX blocks > ~50 lines.
-
-### Content & config (`/lib`)
-All copy/data lives in typed modules (no `any`), so sections stay presentational:
-`site.ts` (name, contact, calendlyUrl, socials) · `nav.ts` · `services.ts` · `industries.ts` · `process.ts` · `stats.ts` · `testimonials.ts` · `team.ts` · `trust.ts` · `types.ts` · `utils.ts` (`cn`).
+**Above-fold (hero):** CSS `@keyframes fade-up` + `.animate-fade-up` to avoid FOIC from Framer Motion SSR.
+**Below-fold (all other sections):** `MotionWrapper`/`MotionItem` with `whileInView`.
 
 ---
 
-## 4. Folder structure (Next.js App Router)
+## Design system
 
-```
-/app
-  layout.tsx            # fonts, metadata, <Navbar/> <main> <Footer/>
-  page.tsx              # composes all sections in narrative order
-  globals.css           # Tailwind base + CSS-variable design tokens
-  sitemap.ts            # Phase 5
-  robots.ts             # Phase 5
-/components
-  /layout
-    navbar.tsx
-    mobile-nav.tsx
-    footer.tsx
-  /sections
-    hero-section.tsx
-    trust-section.tsx
-    services-section.tsx
-    industries-section.tsx
-    process-section.tsx
-    results-section.tsx
-    about-section.tsx
-    ai-demo-section.tsx
-    testimonials-section.tsx
-    final-cta-section.tsx
-  /ui
-    button.tsx  container.tsx  section-header.tsx  card.tsx  badge.tsx  sheet.tsx
-    motion-wrapper.tsx  calendly-button.tsx
-    service-card.tsx  industry-card.tsx  process-step.tsx  stat-card.tsx
-    team-member-card.tsx  testimonial-card.tsx  trust-pill.tsx  demo-card.tsx
-/lib
-  utils.ts  types.ts
-  /content
-    site.ts  nav.ts  services.ts  industries.ts  process.ts
-    stats.ts  testimonials.ts  team.ts  trust.ts
-/public
-  /images               # placeholder assets, clearly labeled as samples
-```
+### Color tokens — OKLCH in `app/globals.css`
+| Token | Value | Use |
+|-------|-------|-----|
+| `background` | `oklch(0.985 0.004 90)` | warm white base |
+| `foreground` | `oklch(0.175 0.065 265)` | navy body text |
+| `primary` | `oklch(0.15 0.07 260)` | deep navy — CTAs, footer |
+| `primary-foreground` | `oklch(1 0 0)` | white on navy |
+| `muted` | `oklch(0.958 0.007 255)` | subtle panel bg |
+| `muted-foreground` | `oklch(0.485 0.025 255)` | secondary text |
+| `accent` | `oklch(0.53 0.085 218)` | soft teal — eyebrows, icons |
+| `border` | `oklch(0.92 0.007 260)` | hairline borders |
+| `ring` | accent | focus rings |
+| `radius` | `0.75rem` | base radius |
 
-> **Note:** Design tokens live in `app/globals.css` (shadcn convention). CLAUDE.md lists a `/styles` folder — flagged as a minor deviation to confirm (see §6).
+No gradient backgrounds. Dark mode tokens defined but UI defaults to light.
+
+### Spacing tokens
+- Section vertical: `py-20 md:py-28 lg:py-32` (`.section-padding`)
+- Section header bottom margin: `mb-12 md:mb-16`
+- Card padding: `p-6 md:p-8`
+- Card gap: `gap-6 md:gap-8`
+- Container: `mx-auto max-w-7xl px-6 md:px-8`
+- Scroll offset: `scroll-margin-top: 4rem` on all `section[id]`
 
 ---
 
-## 5. Design system
+## Content modules (all in `lib/content/`)
 
-> If desired, this section can be lifted into the `.claude/DESIGN.md` that CLAUDE.md references (see §6).
-
-### Color tokens (light, warm-white base) — CSS variables in `globals.css`
-| Token | Value (starting point) | Use |
-|-------|------------------------|-----|
-| `background` | `#FBFAF8` warm white | page base |
-| `foreground` | `#14213A` navy ink | body text, headings |
-| `primary` | `#0E1C3A` deep navy | primary buttons, key headings |
-| `primary-foreground` | `#FFFFFF` | text on navy |
-| `muted` | `#EEF1F5` | subtle panels |
-| `muted-foreground` | `#5C6678` | secondary text |
-| `accent` | `#1F7A8C` soft teal | links, icon accents, eyebrows (sparingly) |
-| `accent-foreground` | `#FFFFFF` | text on accent |
-| `border` | `#E4E6EC` | minimal hairline borders |
-| `card` | `#FFFFFF` | card surfaces |
-| `ring` | accent @ ~40% | focus rings |
-
-Accent is **soft teal**; reserve it for emphasis to avoid the "AI startup" look. No gradient backgrounds.
-
-### Typography — Inter via `next/font` (`--font-sans`)
-| Role | Tailwind | Weight / tracking |
-|------|----------|-------------------|
-| Hero / H1 | `text-4xl md:text-6xl` | semibold, `tracking-tight`, `leading-[1.05]` |
-| Section / H2 | `text-3xl md:text-4xl` | semibold, `tracking-tight` |
-| Card title / H3 | `text-xl md:text-2xl` | semibold |
-| Subhead | `text-lg md:text-xl` | regular, `text-muted-foreground`, `leading-relaxed` |
-| Body | `text-base` | regular, `leading-relaxed` |
-| Eyebrow | `text-sm font-medium uppercase tracking-wide` | accent color |
-
-Minimum body size 1rem — no tiny text.
-
-### Spacing & layout
-- 4px base unit (Tailwind default).
-- **Container:** `max-w-7xl mx-auto px-6 md:px-8` via shared `<Container>`.
-- **Section rhythm:** `py-20 md:py-28 lg:py-32`; section header `mb-12 md:mb-16`.
-- **Cards:** `p-6 md:p-8`; grid gaps `gap-6 md:gap-8`.
-- **Radius:** cards `rounded-xl`, buttons/inputs `rounded-lg`.
-- **Borders/shadows:** `border-border/60` hairlines + `shadow-sm`; subtle soft lift on hover only. No heavy glassmorphism.
-
-### Motion (Framer Motion)
-- **FadeUp:** `initial {opacity:0, y:16}` → `whileInView {opacity:1, y:0}`, `viewport once, margin -80px`, `duration 0.5, ease-out`.
-- **Stagger:** `staggerChildren 0.08` for card grids.
-- **Hover:** shadow lift or `scale 1.01` max.
-- **Reduced motion:** when `prefers-reduced-motion`, disable transforms and render instantly. No parallax, particles, or animated gradients.
-
-### Buttons (shadcn variants)
-- `primary`: navy bg, white text, `hover:bg-primary/90`, `h-11 px-6 rounded-lg`.
-- `outline`: hairline border, transparent, `hover:bg-muted`.
-- `ghost`/`link`: nav and inline use.
-- `lg` size (`h-12`) for hero CTAs.
+| File | Export | Status |
+|------|--------|--------|
+| `site.ts` | `SITE` | Placeholder contact info — swap before launch |
+| `nav.ts` | `NAV_ITEMS` | Final |
+| `services.ts` | `SERVICES` | Final |
+| `industries.ts` | `INDUSTRIES` | Final |
+| `process.ts` | `PROCESS_STEPS` | Final |
+| `results.ts` | `RESULTS` | Final (qualitative outcomes) |
+| `demos.ts` | `DEMO_SCENARIOS` | Final |
+| `trust.ts` | `TRUST_ITEMS` | Final |
+| `testimonials.ts` | `TESTIMONIALS` | Placeholder — replace with real quotes |
+| `team.ts` | `TEAM` | Placeholder — replace names/bios/photos |
 
 ---
 
-## 6. Open ambiguities / missing product decisions
+## SEO / metadata
 
-These don't block Phase 1 but are needed before launch:
-
-1. **Calendly URL** — exact scheduling link for the CTA.
-2. **Real contact details** — phone, email, service-area/address for footer + structured data.
-3. **Brand assets** — logo/wordmark SVG, favicon, OG image. (Using a text wordmark until provided.)
-4. **Founders** — real names, roles, bios, photos for About (placeholders until then).
-5. **Social URLs** — LinkedIn (and any others).
-6. **Contact form?** — Calendly only, or also an email/form fallback? (Plan assumes Calendly only.)
-7. **Privacy Policy / Terms** — Calendly + lead capture implies a privacy link; need content or a stub page (would add one route, accepted exception to single-page rule).
-8. **Placeholder labeling** — agree on a visible "Sample" badge treatment for testimonials/results to stay honest.
-9. **DESIGN.md** — CLAUDE.md references `.claude/DESIGN.md`, which doesn't exist. Promote §5 into it, or leave the design system here?
-10. **`/styles` vs `globals.css`** — confirm shadcn-convention tokens in `app/globals.css` (plan's choice).
-11. **Analytics** — recommend Vercel Analytics or Plausible for a lead-gen site; currently unspecified.
-12. **Accent hue** — palette says "blue/teal"; plan picks soft teal — confirm.
-13. **Font** — plan recommends Inter; confirm brand font.
+- `app/layout.tsx`: `metadata` export with title template, description, canonical, OpenGraph, Twitter
+- `app/opengraph-image.tsx`: auto-generates `/opengraph-image` (navy bg, wordmark, tagline, location)
+- `app/sitemap.ts`: generates `/sitemap.xml`
+- `app/robots.ts`: generates `/robots.txt`
+- `app/layout.tsx` `<head>`: JSON-LD `LocalBusiness` with `areaServed` Woodbridge VA + Philadelphia PA
 
 ---
 
-## Phased build plan
+## Accessibility baseline
 
-### Phase 1 — Foundation & design system *(no visible sections)*
-- Scaffold Next.js (App Router, TS strict) + Tailwind + shadcn/ui + Framer Motion + Lucide.
-- Establish folder structure (§4).
-- Implement design tokens in `globals.css`; wire Inter via `next/font`.
-- Build layout shell: `RootLayout` with baseline SEO metadata, `<main>`, slots for Navbar/Footer.
-- Build UI primitives: `Container`, `SectionHeader`, `Button`, `Card`, `Badge`, `Sheet`, `MotionWrapper`, `CalendlyButton`.
-- Build navigation **structure** (Navbar + MobileNav shells with anchors + CTA) — styling polished in Phase 2.
-- Define typed content model + placeholder content modules in `/lib/content`.
-- **Verify:** `npm run lint`, `npm run typecheck`, folder structure matches plan. No page sections yet.
-
-### Phase 2 — Hero + navigation polish + motion baseline
-- `HeroSection`: clean split layout, headline/subhead, both CTAs (primary → Calendly, secondary → `#ai-demos`), one primary visual area (placeholder mock/photo).
-- Polish Navbar (sticky/scroll state, active-anchor styling) and MobileNav drawer interactions.
-- Finalize the shared motion system (FadeUp + stagger + reduced-motion) and apply to the hero as the reference implementation.
-- **Verify:** lint, typecheck, responsiveness, reduced-motion.
-
-### Phase 3 — Core narrative sections
-- `ServicesSection` (3 services + capabilities; note Workflow Automation needs a capabilities list — drafted as placeholder).
-- `TrustSection` (lightweight value-prop strip).
-- `IndustriesSection` (Restaurants, Corner Stores + pain points).
-- `ProcessSection` (4-step timeline; "we handle everything").
-- **Verify:** lint, typecheck, responsive, a11y (landmarks/headings).
-
-### Phase 4 — Proof, about, demo, conversion, footer
-- `ResultsSection` (placeholder metric cards, clearly labeled).
-- `AboutSection` (founders/team prominent; placeholder bios/photos).
-- `AIDemoSection` (lightweight placeholder — no interactivity/audio/backend).
-- `TestimonialsSection` (responsive grid, labeled samples).
-- `FinalCTASection` (Calendly CTA).
-- `Footer` (columns, LinkedIn, copyright).
-- **Verify:** lint, typecheck, responsive, a11y.
-
-### Phase 5 — Launch polish
-- Motion consistency pass; confirm reduced-motion everywhere.
-- Full responsive QA (mobile / tablet / desktop).
-- Accessibility audit: semantic HTML, ARIA where needed, focus management for the drawer, keyboard nav, color contrast.
-- SEO: per-page metadata, OpenGraph/Twitter, `sitemap.ts`, `robots.ts`, `LocalBusiness` JSON-LD (single regional entity).
-- Performance: `next/image` for placeholders, font display strategy, Lighthouse pass.
-- Final `npm run lint` + `npm run typecheck`.
+- Skip-to-content link at top of `<body>` (`sr-only`, revealed on focus)
+- `<main id="top" tabIndex={-1}>` — skip link target, focusable programmatically
+- All decorative icons have `aria-hidden="true"`
+- All sections have `aria-label="..."` describing content
+- Heading hierarchy complete: `h1` → `h2` (per section) → `h3` (per card/item)
+- `MotionWrapper` renders plain `<div>` when `prefers-reduced-motion` is active
+- Mobile nav: `aria-expanded`, `aria-label`, keyboard-navigable via @base-ui/react Sheet
 
 ---
 
-## Definition of Done (per phase)
-Responsive on mobile/tablet/desktop · no TS errors · no ESLint errors · components reusable (no duplication) · copy follows brand tone · animations subtle/consistent · accessibility verified.
+## Launch blockers (content only — no code changes needed)
+
+| Item | Location | Action |
+|------|----------|--------|
+| Calendly URL | `lib/content/site.ts` → `calendlyUrl` | Replace placeholder |
+| Phone number | `lib/content/site.ts` → `phone` | Replace `(703) 000-0000` |
+| Email | `lib/content/site.ts` → `email` | Replace `hello@woodbridgecg.com` |
+| LinkedIn URL | `lib/content/site.ts` → `socials.linkedin` | Replace placeholder |
+| Team: names/roles | `lib/content/team.ts` | Fill in real founder info |
+| Team: bios | `lib/content/team.ts` | Fill in real bios |
+| Team: photos | `lib/content/team.ts` + `TeamMemberCard` | Replace `<div>` placeholder with `next/image` |
+| Testimonials | `lib/content/testimonials.ts` | Replace sample quotes with real customer stories |
+| OG image | `app/opengraph-image.tsx` | Replace text-only placeholder with designed image |
+| Favicon | (missing) | Add `app/icon.svg` or `app/favicon.ico` |
+
+---
+
+## Recommended post-launch improvements
+
+1. **Favicon** — add `app/icon.svg` with the actual logo mark
+2. **OG image** — replace `opengraph-image.tsx` text-only placeholder with designed 1200×630 image
+3. **Accent color contrast** — `oklch(0.53 0.085 218)` is borderline WCAG AA at small sizes; darken accent to L≈0.45 post-audit
+4. **Privacy policy** — Calendly + any future contact forms require a privacy stub at `/privacy`
+5. **Analytics** — Vercel Analytics or Plausible; no tracking installed yet
+6. **`next.config.ts`** — add `images.remotePatterns` if team photos are externally hosted; add security headers
+7. **`font-display`** — Inter uses `display: "swap"`; consider `optional` after Lighthouse audit
+
+---
+
+## Phase completion log
+
+| Phase | Scope | Status |
+|-------|-------|--------|
+| 1 | Scaffolding, design system, layout shell, typed content, UI primitives | ✓ Complete |
+| 2 | HeroSection, navbar polish, CSS motion baseline | ✓ Complete |
+| 3 | TrustSection, ServicesSection, IndustriesSection, ProcessSection | ✓ Complete |
+| 4 | ResultsSection, AboutSection, AIDemoSection, TestimonialsSection, FinalCTASection, footer | ✓ Complete |
+| 5 | Responsive QA, a11y audit, SEO metadata, sitemap/robots/JSON-LD, OG image, dead code removal | ✓ Complete |
