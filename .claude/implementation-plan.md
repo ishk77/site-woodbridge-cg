@@ -136,7 +136,7 @@ No gradient backgrounds. Dark mode tokens defined but UI defaults to light.
 | Team: photos | `lib/content/team.ts` + `TeamMemberCard` | Replace `<div>` placeholder with `next/image` |
 | Testimonials | `lib/content/testimonials.ts` | Replace sample quotes with real customer stories |
 | OG image | `app/opengraph-image.tsx` | Replace text-only placeholder with designed image |
-| Favicon | (missing) | Add `app/icon.svg` or `app/favicon.ico` |
+| Favicon | `app/favicon.ico` (default Next.js) | Replace with actual logo mark |
 
 ---
 

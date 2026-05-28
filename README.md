@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Woodbridge CG — Website
 
-## Getting Started
+Marketing website for Woodbridge CG, a local technology consultancy serving small businesses in Woodbridge, VA and Philadelphia, PA.
 
-First, run the development server:
+**Stack:** Next.js 16 App Router · TypeScript strict · Tailwind CSS v4 · shadcn/ui · Framer Motion · Lucide React
+
+**Status:** v1-foundation complete. Awaiting real business content before deployment.
+
+---
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev       # start dev server at localhost:3000
+npm run build     # production build
+npm run lint      # ESLint
+npm run typecheck # TypeScript check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Content updates
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All placeholder values live in one place — swap these before launch:
 
-## Learn More
+| What | File |
+|------|------|
+| Calendly URL, phone, email, LinkedIn | `lib/content/site.ts` |
+| Team names, bios, photos | `lib/content/team.ts` |
+| Testimonials | `lib/content/testimonials.ts` |
+| OG image | `app/opengraph-image.tsx` |
 
-To learn more about Next.js, take a look at the following resources:
+Section copy (services, industries, process, etc.) lives in `lib/content/`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+Deploy via Vercel. Push to `main` — Vercel builds automatically.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+After deploying, verify:
+- `/sitemap.xml` returns valid XML
+- `/robots.txt` is accessible
+- `/opengraph-image` renders correctly
+- Calendly link opens the booking page
