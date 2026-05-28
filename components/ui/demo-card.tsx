@@ -11,7 +11,7 @@ export function DemoCard({ demo, className }: DemoCardProps) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-xl border border-border bg-card p-6 shadow-sm",
+        "flex flex-col gap-4 rounded-xl border border-border bg-card p-6 shadow-sm md:p-8",
         className
       )}
     >

@@ -2,7 +2,7 @@ export const SITE = {
   name: "Woodbridge CG",
   tagline: "Modernizing Small Businesses Without Enterprise Complexity",
   description:
-    "Woodbridge CG helps local businesses streamline customer interactions with personalized websites, AI-powered phone agents, and practical workflow automation.",
+    "Woodbridge CG helps local restaurants, stores, and service businesses in Woodbridge, VA and Philadelphia, PA modernize operations with personalized websites, AI phone agents, and practical workflow automation.",
   url: "https://woodbridgecg.com",
   // Placeholder — replace with actual Calendly link before launch
   calendlyUrl: "https://calendly.com/woodbridgecg",

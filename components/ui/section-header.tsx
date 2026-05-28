@@ -33,7 +33,12 @@ export function SectionHeader({
         {title}
       </h2>
       {description && (
-        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+        <p
+          className={cn(
+            "mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl",
+            align === "center" && "mx-auto"
+          )}
+        >
           {description}
         </p>
       )}

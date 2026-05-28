@@ -73,7 +73,7 @@ export function HeroSection() {
                   key={point}
                   className="flex items-center gap-1.5 text-sm text-muted-foreground"
                 >
-                  <Check className="h-3.5 w-3.5 shrink-0 text-accent" />
+                  <Check className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
                   {point}
                 </li>
               ))}

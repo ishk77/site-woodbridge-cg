@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   },
   description: SITE.description,
   metadataBase: new URL(SITE.url),
+  alternates: {
+    canonical: SITE.url,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -33,6 +36,40 @@ export const metadata: Metadata = {
   },
 }
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: SITE.name,
+  description: SITE.description,
+  url: SITE.url,
+  telephone: SITE.phone,
+  email: SITE.email,
+  areaServed: [
+    {
+      "@type": "City",
+      name: "Woodbridge",
+      containedInPlace: {
+        "@type": "AdministrativeArea",
+        name: "Virginia",
+      },
+    },
+    {
+      "@type": "City",
+      name: "Philadelphia",
+      containedInPlace: {
+        "@type": "AdministrativeArea",
+        name: "Pennsylvania",
+      },
+    },
+  ],
+  knowsAbout: [
+    "small business technology",
+    "AI phone agents",
+    "workflow automation",
+    "local business websites",
+  ],
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,9 +77,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full scroll-smooth antialiased`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="flex min-h-full flex-col">
+        {/* Skip navigation link — keyboard accessibility */}
+        <a
+          href="#top"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:shadow-md focus:outline-none focus:ring-2 focus:ring-ring"
+        >
+          Skip to main content
+        </a>
         <Navbar />
-        <main id="top" className="flex-1">
+        <main id="top" className="flex-1" tabIndex={-1}>
           {children}
         </main>
         <Footer />

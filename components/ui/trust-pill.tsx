@@ -16,7 +16,7 @@ export function TrustPill({ item, className }: TrustPillProps) {
         className
       )}
     >
-      <Icon className="h-4 w-4 shrink-0 text-accent" />
+      <Icon className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
       <span className="text-sm font-medium">{label}</span>
     </div>
   )

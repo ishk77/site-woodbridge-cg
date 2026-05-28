@@ -17,7 +17,7 @@ export function IndustryCard({ industry, className }: IndustryCardProps) {
       )}
     >
       <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/8">
-        <Icon className="h-5 w-5 text-primary" />
+        <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
       </div>
       <div className="flex flex-col gap-2">
         <h3 className="text-xl font-semibold">{title}</h3>

@@ -27,12 +27,6 @@ export interface ProcessStep {
   description: string
 }
 
-export interface StatData {
-  label: string
-  value: string
-  description: string
-}
-
 export interface TestimonialData {
   id: string
   quote: string
@@ -59,4 +53,11 @@ export interface DemoScenario {
   title: string
   description: string
   scenario: string
+}
+
+export interface ResultOutcome {
+  id: string
+  headline: string
+  detail: string
+  Icon: LucideIcon
 }

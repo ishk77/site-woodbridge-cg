@@ -20,7 +20,7 @@ export function TeamMemberCard({ member, className }: TeamMemberCardProps) {
         aria-label={member.imageAlt}
       />
       <div className="flex flex-col gap-1">
-        <p className="font-semibold">{member.name}</p>
+        <h3 className="font-semibold">{member.name}</h3>
         <p className="text-sm text-accent">{member.role}</p>
       </div>
       <p className="text-sm leading-relaxed text-muted-foreground">{member.bio}</p>

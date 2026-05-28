@@ -30,7 +30,7 @@ export function Footer() {
               className="flex w-fit items-center gap-2 text-sm text-primary-foreground/70 transition-colors hover:text-primary-foreground"
               aria-label="Woodbridge CG on LinkedIn"
             >
-              <ExternalLinkIcon className="h-4 w-4" />
+              <ExternalLinkIcon className="h-4 w-4" aria-hidden="true" />
               LinkedIn
             </Link>
           </div>
@@ -96,7 +96,15 @@ export function Footer() {
                   href={`mailto:${SITE.email}`}
                   className="text-sm text-primary-foreground/70 transition-colors hover:text-primary-foreground"
                 >
-                  Contact Us
+                  {SITE.email}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`tel:${SITE.phone}`}
+                  className="text-sm text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+                >
+                  {SITE.phone}
                 </Link>
               </li>
             </ul>

@@ -18,7 +18,7 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
       )}
     >
       <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-accent/10">
-        <Icon className="h-5 w-5 text-accent" />
+        <Icon className="h-5 w-5 text-accent" aria-hidden="true" />
       </div>
       <div className="flex flex-col gap-2">
         <h3 className="text-xl font-semibold">{title}</h3>
